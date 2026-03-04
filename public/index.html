@@ -3,72 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NanoLink | Professional Shortener</title>
+    <title>NanoLink 2.0 | Advanced Analytics</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #060b14; color: #f8fafc; font-family: 'Inter', sans-serif; }
-        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
-        .btn-glow { transition: all 0.3s ease; box-shadow: 0 0 0 rgba(79, 70, 229, 0); }
-        .btn-glow:hover { box-shadow: 0 0 20px rgba(79, 70, 229, 0.4); }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-in { animation: slideIn 0.4s ease forwards; }
+        body { background: #04070d; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(10, 15, 28, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.03); }
+        .accent-glow { text-shadow: 0 0 15px rgba(99, 102, 241, 0.5); }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: slideIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-6 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
-    <div class="max-w-2xl w-full space-y-10">
-        <header class="text-center space-y-2">
-            <h1 class="text-5xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">NanoLink</h1>
-            <p class="text-slate-500 font-medium uppercase tracking-widest text-xs">Architectural Precision for Lucy</p>
+<body class="min-h-screen flex flex-col items-center justify-start p-6 md:p-12 bg-[radial-gradient(circle_at_bottom_left,_var(--tw-gradient-stops))] from-indigo-950/20 via-slate-950 to-black">
+    <div class="max-w-4xl w-full space-y-12">
+        <header class="text-center space-y-4">
+            <h1 class="text-6xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-br from-indigo-300 via-indigo-500 to-cyan-400 accent-glow">NanoLink <span class="text-xl align-top text-indigo-500/50">2.0</span></h1>
+            <p class="text-slate-500 font-bold uppercase tracking-[0.3em] text-[10px]">Fox Architect · Evolution Protocol</p>
         </header>
 
-        <main class="glass rounded-3xl p-10 shadow-2xl space-y-8">
-            <div class="space-y-3">
-                <label class="block text-xs font-bold uppercase tracking-widest text-slate-400">Target URL</label>
-                <input type="text" id="longUrl" placeholder="https://your-long-destination.com/..." 
-                       class="w-full bg-slate-950 border border-slate-800 rounded-xl px-5 py-4 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-slate-200">
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="space-y-3">
-                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400">Expiry (Hours)</label>
-                    <input type="number" id="expiry" placeholder="Leave blank for Permanent" 
-                           class="w-full bg-slate-950 border border-slate-800 rounded-xl px-5 py-4 focus:border-indigo-500 outline-none transition-all text-slate-200">
+        <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+            <!-- Left: Generator -->
+            <main class="lg:col-span-3 glass rounded-[2rem] p-8 md:p-10 shadow-3xl space-y-8 self-start">
+                <div class="space-y-4">
+                    <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500">Destination</label>
+                    <input type="text" id="longUrl" placeholder="https://destination-domain.com/path" 
+                           class="w-full bg-slate-950/50 border border-slate-800/50 rounded-2xl px-6 py-4 focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/20 outline-none transition-all text-slate-200 placeholder:text-slate-700">
                 </div>
-                <button id="btnGen" onclick="shorten()" class="mt-7 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold tracking-wide btn-glow transition-all disabled:opacity-50">
-                    Generate Link
+
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500">Custom Path (Opt)</label>
+                        <input type="text" id="customSlug" placeholder="e.g. my-secret" 
+                               class="w-full bg-slate-950/50 border border-slate-800/50 rounded-2xl px-6 py-4 focus:border-indigo-500/50 outline-none transition-all text-slate-200 placeholder:text-slate-700">
+                    </div>
+                    <div class="space-y-4">
+                        <label class="block text-[10px] font-black uppercase tracking-widest text-slate-500">Expiry (Hrs)</label>
+                        <input type="number" id="expiry" placeholder="Permanent" 
+                               class="w-full bg-slate-950/50 border border-slate-800/50 rounded-2xl px-6 py-4 focus:border-indigo-500/50 outline-none transition-all text-slate-200 placeholder:text-slate-700">
+                    </div>
+                </div>
+
+                <button id="btnGen" onclick="shorten()" class="w-full bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-500 hover:to-indigo-600 text-white py-5 rounded-2xl font-black tracking-widest shadow-xl shadow-indigo-900/20 transition-all active:scale-[0.98] disabled:opacity-50">
+                    ACTIVATE LINK
                 </button>
-            </div>
 
-            <div id="result" class="hidden glass rounded-xl p-5 border-indigo-500/30 flex justify-between items-center animate-in">
-                <div class="flex flex-col">
-                    <span class="text-xs text-slate-500 font-bold uppercase tracking-tighter">Your Short URL</span>
-                    <span id="shortUrl" class="text-indigo-400 font-mono text-lg font-bold"></span>
+                <div id="result" class="hidden glass rounded-2xl p-6 border-indigo-500/20 flex flex-col md:flex-row gap-6 items-center animate-in">
+                    <img id="qrCode" class="w-24 h-24 rounded-lg bg-white p-1 shadow-lg" src="" alt="QR">
+                    <div class="flex-1 space-y-2 text-center md:text-left">
+                        <span class="text-[10px] text-slate-500 font-black uppercase tracking-tighter">Encrypted Shortened Path</span>
+                        <div id="shortUrl" class="text-indigo-400 font-mono text-xl font-bold truncate underline decoration-indigo-500/30"></div>
+                        <button onclick="copy()" id="btnCopy" class="mt-2 text-[10px] font-black uppercase tracking-widest text-indigo-500 hover:text-indigo-400">Copy to Clipboard</button>
+                    </div>
                 </div>
-                <button onclick="copy()" id="btnCopy" class="bg-slate-800 hover:bg-slate-700 px-6 py-2 rounded-lg text-sm font-bold transition-all">
-                    Copy
-                </button>
-            </div>
-        </main>
+            </main>
 
-        <section id="stats" class="space-y-6">
-            <div class="flex justify-between items-center">
-                <div class="flex items-center gap-4">
-                    <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">Real-Time Analytics</h2>
-                    <input type="text" id="trackCode" placeholder="Code (e.g. CofWqf)" 
-                           class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1 text-xs outline-none focus:border-indigo-500 text-indigo-300">
-                    <button onclick="startTracking()" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-3 py-1 rounded font-bold uppercase tracking-tighter transition-all">Track</button>
+            <!-- Right: Real-time Radar -->
+            <section id="stats" class="lg:col-span-2 space-y-6">
+                <div class="flex justify-between items-end border-b border-slate-800/50 pb-4">
+                    <div class="space-y-1">
+                        <h2 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400">Intelligence Radar</h2>
+                        <input type="text" id="trackCode" placeholder="Enter Code..." onkeypress="if(event.key==='Enter')startTracking()"
+                               class="bg-transparent text-indigo-400 font-mono text-lg outline-none placeholder:text-slate-800 w-32">
+                    </div>
+                    <span id="liveBadge" class="hidden px-2 py-1 bg-indigo-500/10 text-indigo-400 text-[9px] font-black rounded-full border border-indigo-500/20 animate-pulse">LIVE FEED</span>
                 </div>
-                <span id="liveBadge" class="hidden px-2 py-1 bg-green-500/10 text-green-500 text-[10px] font-bold rounded border border-green-500/20 animate-pulse">LIVE</span>
-            </div>
-            <div id="statsList" class="space-y-3">
-                <p class="text-slate-600 text-sm italic text-center py-10">Enter a short code to see traffic...</p>
-            </div>
-        </section>
+                <div id="statsList" class="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                    <p class="text-slate-700 text-[10px] font-bold uppercase text-center py-20 tracking-widest">Waiting for target...</p>
+                </div>
+            </section>
+        </div>
     </div>
 
     <!-- Notification Toast -->
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 glass px-8 py-4 rounded-2xl shadow-2xl border-indigo-500/50 text-indigo-300 font-bold text-sm translate-y-20 opacity-0 transition-all duration-300">
-        Link Copied to Clipboard
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 glass px-8 py-4 rounded-full shadow-2xl border-indigo-500/30 text-indigo-300 font-black text-[10px] uppercase tracking-widest translate-y-20 opacity-0 transition-all duration-500">
+        Status: Action Confirmed
     </div>
 
     <script>
@@ -86,38 +93,42 @@
         async function shorten() {
             const url = document.getElementById('longUrl').value;
             const expiry = document.getElementById('expiry').value;
+            const custom = document.getElementById('customSlug').value;
             const btn = document.getElementById('btnGen');
             
-            // Simple URL regex check
             const urlPattern = /^(https?:\/\/)[^\s$.?#].[^\s]*$/gm;
             if (!url || !urlPattern.test(url)) {
-                showToast("Please enter a valid HTTP/HTTPS URL");
+                showToast("INVALID DESTINATION PROTOCOL");
                 return;
             }
 
             btn.disabled = true;
-            btn.innerText = 'Processing...';
+            btn.innerText = 'CALCULATING...';
 
             try {
                 const res = await fetch('/api/shorten', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ long_url: url, expires_in_hours: expiry })
+                    body: JSON.stringify({ long_url: url, expires_in_hours: expiry, custom_slug: custom })
                 });
                 const data = await res.json();
                 
+                if (data.error) throw new Error(data.error);
+
                 document.getElementById('result').classList.remove('hidden');
                 document.getElementById('shortUrl').innerText = data.short_url;
+                document.getElementById('qrCode').src = data.qr_code;
+                document.getElementById('trackCode').value = data.short_code;
                 currentCode = data.short_code;
                 
                 document.getElementById('liveBadge').classList.remove('hidden');
                 startPolling();
-                showToast("Short link generated successfully");
+                showToast("Nanolink Deployed Successfully");
             } catch (e) {
-                showToast("Error connecting to server");
+                showToast(e.message || "Uplink Error");
             } finally {
                 btn.disabled = false;
-                btn.innerText = 'Generate Link';
+                btn.innerText = 'ACTIVATE LINK';
             }
         }
 
@@ -134,22 +145,36 @@
             const list = document.getElementById('statsList');
             
             if (data.length === 0) {
-                list.innerHTML = '<p class="text-slate-600 text-sm italic text-center py-6">No visits detected yet.</p>';
+                list.innerHTML = '<p class="text-slate-700 text-[10px] font-bold uppercase text-center py-10 tracking-widest">No Intelligence Gathered</p>';
                 return;
             }
 
             list.innerHTML = data.map((s, i) => `
-                <div class="glass p-4 rounded-xl text-sm flex justify-between items-center animate-in" style="animation-delay: ${i * 50}ms">
-                    <div class="flex items-center gap-4">
-                        <div class="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]"></div>
-                        <div class="flex flex-col">
-                            <span class="text-indigo-200 font-mono">${s.ip}</span>
-                            <span class="text-[10px] text-slate-500 uppercase font-bold tracking-tight">${s.geo_location}</span>
+                <div class="glass p-5 rounded-3xl text-sm space-y-3 animate-in" style="animation-delay: ${i * 100}ms">
+                    <div class="flex justify-between items-start">
+                        <div class="flex items-center gap-3">
+                            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.8)]"></div>
+                            <span class="text-indigo-200 font-mono text-xs tracking-tighter">${s.ip}</span>
                         </div>
+                        <span class="text-[9px] text-slate-600 font-mono uppercase">${new Date(s.visited_at).toLocaleTimeString()}</span>
                     </div>
-                    <div class="flex flex-col items-end">
-                        <span class="text-xs text-slate-400">${s.referer}</span>
-                        <span class="text-[10px] text-slate-600 font-mono">${new Date(s.visited_at).toLocaleTimeString()}</span>
+                    <div class="grid grid-cols-2 gap-2 text-[9px] font-black uppercase tracking-tighter">
+                        <div class="flex flex-col gap-1">
+                            <span class="text-slate-600">Location</span>
+                            <span class="text-slate-300 truncate">${s.geo_location}</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-slate-600">System</span>
+                            <span class="text-slate-300 truncate">${s.os}</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-slate-600">Browser</span>
+                            <span class="text-slate-300 truncate">${s.browser}</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <span class="text-slate-600">Device</span>
+                            <span class="text-slate-300 truncate">${s.device_info}</span>
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -158,24 +183,14 @@
         function copy() {
             const url = document.getElementById('shortUrl').innerText;
             navigator.clipboard.writeText(url);
-            showToast("Copied to Clipboard");
-            
-            const btn = document.getElementById('btnCopy');
-            btn.innerText = 'Copied!';
-            btn.classList.replace('bg-slate-800', 'bg-indigo-600');
-            setTimeout(() => {
-                btn.innerText = 'Copy';
-                btn.classList.replace('bg-indigo-600', 'bg-slate-800');
-            }, 2000);
+            showToast("DATA COPIED TO CLIPBOARD");
         }
 
         function showToast(msg) {
             const t = document.getElementById('toast');
             t.innerText = msg;
             t.classList.remove('translate-y-20', 'opacity-0');
-            setTimeout(() => {
-                t.classList.add('translate-y-20', 'opacity-0');
-            }, 3000);
+            setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000);
         }
     </script>
 </body>
