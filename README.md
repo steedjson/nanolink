@@ -39,13 +39,18 @@ npm install
 ### 2. 动态感知
 系统会自动感知当前的 Protocol (协议) 与 Host (域名+端口)，实现短链接地址的零配置生成。
 
-### 3. 启动服务
+### 3. 生产级部署 (Systemd 守护)
+本项目已针对 Linux 环境进行系统级加固。建议使用 Systemd 托管以获得自动重启与持久生命力：
 ```bash
-# 默认端口 30783，支持通过 $PORT 环境变量自定义
-PORT=30783 node src/server.js
+# 重启服务指令
+systemctl --user restart nanolink.service
+
+# 查看实时运行状态
+systemctl --user status nanolink.service
 ```
 
 ### 4. 访问管理后台
+默认端口：`30783`  
 地址：`http://localhost:30783/index.html`
 
 ---
