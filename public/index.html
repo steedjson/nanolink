@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NanoLink | Professional Shortener</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #060b14; color: #f8fafc; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .btn-glow { transition: all 0.3s ease; box-shadow: 0 0 0 rgba(79, 70, 229, 0); }
+        .btn-glow:hover { box-shadow: 0 0 20px rgba(79, 70, 229, 0.4); }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: slideIn 0.4s ease forwards; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-slate-950 to-black">
+    <div class="max-w-2xl w-full space-y-10">
+        <header class="text-center space-y-2">
+            <h1 class="text-5xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">NanoLink</h1>
+            <p class="text-slate-500 font-medium uppercase tracking-widest text-xs">Architectural Precision for Lucy</p>
+        </header>
+
+        <main class="glass rounded-3xl p-10 shadow-2xl space-y-8">
+            <div class="space-y-3">
+                <label class="block text-xs font-bold uppercase tracking-widest text-slate-400">Target URL</label>
+                <input type="text" id="longUrl" placeholder="https://your-long-destination.com/..." 
+                       class="w-full bg-slate-950 border border-slate-800 rounded-xl px-5 py-4 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-slate-200">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-3">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-slate-400">Expiry (Hours)</label>
+                    <input type="number" id="expiry" placeholder="Leave blank for Permanent" 
+                           class="w-full bg-slate-950 border border-slate-800 rounded-xl px-5 py-4 focus:border-indigo-500 outline-none transition-all text-slate-200">
+                </div>
+                <button id="btnGen" onclick="shorten()" class="mt-7 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold tracking-wide btn-glow transition-all disabled:opacity-50">
+                    Generate Link
+                </button>
+            </div>
+
+            <div id="result" class="hidden glass rounded-xl p-5 border-indigo-500/30 flex justify-between items-center animate-in">
+                <div class="flex flex-col">
+                    <span class="text-xs text-slate-500 font-bold uppercase tracking-tighter">Your Short URL</span>
+                    <span id="shortUrl" class="text-indigo-400 font-mono text-lg font-bold"></span>
+                </div>
+                <button onclick="copy()" id="btnCopy" class="bg-slate-800 hover:bg-slate-700 px-6 py-2 rounded-lg text-sm font-bold transition-all">
+                    Copy
+                </button>
+            </div>
+        </main>
+
+        <section id="stats" class="space-y-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400">Real-Time Analytics</h2>
+                    <input type="text" id="trackCode" placeholder="Code (e.g. CofWqf)" 
+                           class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1 text-xs outline-none focus:border-indigo-500 text-indigo-300">
+                    <button onclick="startTracking()" class="text-[10px] bg-slate-800 hover:bg-slate-700 px-3 py-1 rounded font-bold uppercase tracking-tighter transition-all">Track</button>
+                </div>
+                <span id="liveBadge" class="hidden px-2 py-1 bg-green-500/10 text-green-500 text-[10px] font-bold rounded border border-green-500/20 animate-pulse">LIVE</span>
+            </div>
+            <div id="statsList" class="space-y-3">
+                <p class="text-slate-600 text-sm italic text-center py-10">Enter a short code to see traffic...</p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 glass px-8 py-4 rounded-2xl shadow-2xl border-indigo-500/50 text-indigo-300 font-bold text-sm translate-y-20 opacity-0 transition-all duration-300">
+        Link Copied to Clipboard
+    </div>
+
+    <script>
+        let currentCode = null;
+        let pollInterval = null;
+
+        function startTracking() {
+            const code = document.getElementById('trackCode').value;
+            if (!code) return;
+            currentCode = code;
+            document.getElementById('liveBadge').classList.remove('hidden');
+            startPolling();
+        }
+
+        async function shorten() {
+            const url = document.getElementById('longUrl').value;
+            const expiry = document.getElementById('expiry').value;
+            const btn = document.getElementById('btnGen');
+            
+            // Simple URL regex check
+            const urlPattern = /^(https?:\/\/)[^\s$.?#].[^\s]*$/gm;
+            if (!url || !urlPattern.test(url)) {
+                showToast("Please enter a valid HTTP/HTTPS URL");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = 'Processing...';
+
+            try {
+                const res = await fetch('/api/shorten', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ long_url: url, expires_in_hours: expiry })
+                });
+                const data = await res.json();
+                
+                document.getElementById('result').classList.remove('hidden');
+                document.getElementById('shortUrl').innerText = data.short_url;
+                currentCode = data.short_code;
+                
+                document.getElementById('liveBadge').classList.remove('hidden');
+                startPolling();
+                showToast("Short link generated successfully");
+            } catch (e) {
+                showToast("Error connecting to server");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = 'Generate Link';
+            }
+        }
+
+        function startPolling() {
+            if (pollInterval) clearInterval(pollInterval);
+            loadStats();
+            pollInterval = setInterval(loadStats, 3000);
+        }
+
+        async function loadStats() {
+            if (!currentCode) return;
+            const res = await fetch(`/api/stats/${currentCode}`);
+            const data = await res.json();
+            const list = document.getElementById('statsList');
+            
+            if (data.length === 0) {
+                list.innerHTML = '<p class="text-slate-600 text-sm italic text-center py-6">No visits detected yet.</p>';
+                return;
+            }
+
+            list.innerHTML = data.map((s, i) => `
+                <div class="glass p-4 rounded-xl text-sm flex justify-between items-center animate-in" style="animation-delay: ${i * 50}ms">
+                    <div class="flex items-center gap-4">
+                        <div class="w-2 h-2 rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.6)]"></div>
+                        <div class="flex flex-col">
+                            <span class="text-indigo-200 font-mono">${s.ip}</span>
+                            <span class="text-[10px] text-slate-500 uppercase font-bold tracking-tight">${s.geo_location}</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <span class="text-xs text-slate-400">${s.referer}</span>
+                        <span class="text-[10px] text-slate-600 font-mono">${new Date(s.visited_at).toLocaleTimeString()}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function copy() {
+            const url = document.getElementById('shortUrl').innerText;
+            navigator.clipboard.writeText(url);
+            showToast("Copied to Clipboard");
+            
+            const btn = document.getElementById('btnCopy');
+            btn.innerText = 'Copied!';
+            btn.classList.replace('bg-slate-800', 'bg-indigo-600');
+            setTimeout(() => {
+                btn.innerText = 'Copy';
+                btn.classList.replace('bg-indigo-600', 'bg-slate-800');
+            }, 2000);
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                t.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
